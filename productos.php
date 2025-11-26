@@ -26,50 +26,64 @@ if ($result->num_rows === 0) {
 }
 
 $categoria = $result->fetch_assoc()['nombre'];
-
-echo "<div class='container mt-4'>";
-echo "<h2 class='text-center mb-4'>$categoria</h2>";
-echo "<hr>";
-
-// Obtener productos (máximo 3)
-$query = $conn->prepare("SELECT * FROM producto WHERE categoriaID = ? LIMIT 3");
-$query->bind_param("i", $categoria_id);
-$query->execute();
-$productos = $query->get_result();
-
-if ($productos->num_rows === 0) {
-    echo "<p class='text-center mt-4'>No hay productos disponibles.</p>";
-} else {
-    echo "<div class='row'>";
-
-    while ($p = $productos->fetch_assoc()) {
-
-        // Imagen — ya no añade carpeta, usa valor literal de BD
-        $imagen = (!empty($p['imagen']))
-            ? $p['imagen']
-            : "https://placehold.co/200x200?text=Sin+Imagen";
-
-        echo "
-        <div class='col-md-4 mb-4'>
-            <div class='card shadow-sm h-100'>
-                <img src='$imagen' class='card-img-top' style='height:200px; object-fit:contain;'>
-
-                <div class='card-body text-center'>
-                    <h5 class='card-title'>{$p['nombre']}</h5>
-                    <p class='fw-bold text-success'>{$p['precio']} €</p>
-
-                    <a href='detalleProducto.php?id={$p['id']}' class='btn btn-outline-primary btn-sm'>
-                        <i class='fa-solid fa-eye'></i> Ver producto
-                    </a>
-                </div>
-            </div>
-        </div>";
-    }
-
-    echo "</div>";
-}
-
-echo "</div>";
-
-include "footer.php";
 ?>
+
+<!-- ========== MINI HERO / BANNER SUPERIOR ========== -->
+<div class="hero-small d-flex align-items-center justify-content-center text-center"
+     style="background: linear-gradient(90deg, #1b0033, #3a0066);
+            height: 160px;
+            color: white;
+            text-shadow: 1px 1px 6px black;">
+
+    <div>
+        <h2 class="fw-bold"><?= $categoria ?></h2>
+        <p class="m-0">Explora nuestra selección de productos de esta categoría</p>
+    </div>
+</div>
+
+<!-- ========== CONTENIDO PRINCIPAL ========== -->
+<div class="container mt-4">
+
+    <div class="row">
+
+        <?php
+        // Obtener productos (máximo 3 o todos si quieres luego cambiarlo)
+        $query = $conn->prepare("SELECT * FROM producto WHERE categoriaID = ? LIMIT 3");
+        $query->bind_param("i", $categoria_id);
+        $query->execute();
+        $productos = $query->get_result();
+
+        if ($productos->num_rows === 0) {
+            echo "<p class='text-center mt-4'>No hay productos disponibles.</p>";
+        } else {
+            while ($p = $productos->fetch_assoc()) {
+
+                // Imagen (usa valor literal de la BD)
+                $imagen = (!empty($p['imagen']))
+                    ? $p['imagen']
+                    : "https://placehold.co/200x200?text=Sin+Imagen";
+
+                echo "
+                <div class='col-md-4 mb-4'>
+                    <div class='card shadow-sm h-100'>
+                        <img src='$imagen' class='card-img-top' style='height:200px; object-fit:contain;'>
+
+                        <div class='card-body text-center'>
+                            <h5 class='card-title'>{$p['nombre']}</h5>
+                            <p class='fw-bold text-success'>{$p['precio']} €</p>
+
+                            <a href='detalleProducto.php?id={$p['id']}' class='btn btn-outline-primary btn-sm'>
+                                <i class='fa-solid fa-eye'></i> Ver producto
+                            </a>
+                        </div>
+                    </div>
+                </div>";
+            }
+        }
+        ?>
+
+    </div>
+
+</div>
+
+<?php include "footer.php"; ?>

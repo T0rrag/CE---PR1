@@ -25,20 +25,34 @@ if ($result->num_rows === 0) {
 
 $producto = $result->fetch_assoc();
 
-// Imagen
+// Imagen literal desde BD o placeholder
 $imagen = (!empty($producto['imagen']))
     ? $producto['imagen']
     : "https://placehold.co/300x300?text=Sin+Imagen";
 
 ?>
 
+<!-- ========== BANNER SUPERIOR ========== -->
+<div class="hero-small d-flex align-items-center justify-content-center text-center"
+     style="background: linear-gradient(90deg, #1b0033, #3a0066);
+            height: 160px;
+            color: white;
+            text-shadow: 1px 1px 6px black;">
+
+    <div>
+        <h2 class="fw-bold"><?= $producto['nombre'] ?></h2>
+        <p class="m-0">Detalles completos del producto</p>
+    </div>
+</div>
+
+<!-- ========== CUERPO PRINCIPAL ========== -->
 <div class="container mt-5">
 
     <div class="row">
 
         <!-- IMAGEN -->
         <div class="col-md-6 text-center">
-            <img src="<?php echo $imagen; ?>" 
+            <img src="<?= $imagen; ?>" 
                  alt="imagen producto" 
                  class="img-fluid border p-2 shadow-sm"
                  style="max-height: 350px; object-fit: contain;">
@@ -47,10 +61,10 @@ $imagen = (!empty($producto['imagen']))
         <!-- DETALLES DEL PRODUCTO -->
         <div class="col-md-6">
 
-            <h2><?php echo $producto['nombre']; ?></h2>
+            <h2><?= $producto['nombre']; ?></h2>
 
             <p class="text-muted mt-2" style="font-size: 1.1em;">
-                <?php echo nl2br($producto['descripcion']); ?>
+                <?= nl2br($producto['descripcion']); ?>
             </p>
 
             <hr>
@@ -58,14 +72,14 @@ $imagen = (!empty($producto['imagen']))
             <div class="d-flex justify-content-between align-items-center mt-4">
 
                 <!-- BOTÓN AÑADIR AL CARRITO -->
-                <a href="carrito.php?add=<?php echo $producto['id']; ?>" 
+                <a href="carrito.php?add=<?= $producto['id']; ?>" 
                    class="btn btn-primary btn-lg">
                     <i class="fa-solid fa-cart-plus"></i> Añadir al carrito
                 </a>
 
                 <!-- PRECIO -->
                 <span class="fw-bold text-success" style="font-size: 1.8em;">
-                    <?php echo $producto['precio']; ?> €
+                    <?= $producto['precio']; ?> €
                 </span>
 
             </div>
