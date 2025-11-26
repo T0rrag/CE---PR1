@@ -27,7 +27,6 @@ if ($result->num_rows === 0) {
 
 $categoria = $result->fetch_assoc()['nombre'];
 
-// Mostrar título
 echo "<div class='container mt-4'>";
 echo "<h2 class='text-center mb-4'>$categoria</h2>";
 echo "<hr>";
@@ -39,45 +38,28 @@ $query->execute();
 $productos = $query->get_result();
 
 if ($productos->num_rows === 0) {
-    echo "<p class='text-center mt-4'>No hay productos en esta categoría.</p>";
+    echo "<p class='text-center mt-4'>No hay productos disponibles.</p>";
 } else {
     echo "<div class='row'>";
 
     while ($p = $productos->fetch_assoc()) {
 
+        // Imagen — ya no añade carpeta, usa valor literal de BD
+        $imagen = (!empty($p['imagen']))
+            ? $p['imagen']
+            : "https://placehold.co/200x200?text=Sin+Imagen";
 
-$defaultImage = "https://via.placeholder.com/200x200?text=Sin+Imagen";
-
-if (empty($p['imagen'])) {
-
-    $imagen = $defaultImage;
-
-} else {
-
-    // Si empieza con http, es URL externa válida
-    if (preg_match('/^https?:\/\//', $p['imagen'])) {
-
-        $imagen = $p['imagen'];
-
-    } else {
-
-        // Imagen local en /imagenes/
-        $imagen = "imagenes/" . trim($p['imagen']);
-    }
-}
-
-
-        // Tarjeta de producto
         echo "
         <div class='col-md-4 mb-4'>
             <div class='card shadow-sm h-100'>
                 <img src='$imagen' class='card-img-top' style='height:200px; object-fit:contain;'>
+
                 <div class='card-body text-center'>
                     <h5 class='card-title'>{$p['nombre']}</h5>
                     <p class='fw-bold text-success'>{$p['precio']} €</p>
 
-                    <a href='carrito.php?add={$p['id']}' class='btn btn-primary btn-sm'>
-                        <i class='fa-solid fa-cart-plus'></i> Añadir al carrito
+                    <a href='detalleProducto.php?id={$p['id']}' class='btn btn-outline-primary btn-sm'>
+                        <i class='fa-solid fa-eye'></i> Ver producto
                     </a>
                 </div>
             </div>
